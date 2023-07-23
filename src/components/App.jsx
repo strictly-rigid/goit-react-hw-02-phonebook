@@ -11,10 +11,22 @@ class App extends Component {
     filter: '',
   };
 
+  isContactInList = name => {
+    const normalizedName = name.trim().toLowerCase();
+
+    return this.state.contacts.some(
+      contact => contact.name.toLowerCase() === normalizedName
+    );
+  };
+
   addContact = newContact => {
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-    }));
+    if (this.isContactInList(newContact.name)) {
+      alert('This contact already exists!');
+    } else {
+      this.setState(prevState => ({
+        contacts: [...prevState.contacts, newContact],
+      }));
+    }
   };
 
   deleteContact = id => {
@@ -28,7 +40,7 @@ class App extends Component {
   };
 
   getFilteredContacts = () => {
-    const normalizedFilter = this.state.filter.toLowerCase();
+    const normalizedFilter = this.state.filter.toLowerCase().trim();
     return this.state.contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
@@ -42,17 +54,14 @@ class App extends Component {
           <h1 className={css.appTitle}>Phonebook</h1>
           <Form
             addContact={this.addContact}
-            actualContacts={filteredContacts}
+            isContactInList={this.isContactInList}
           />
           <h2 className={css.contactsTitle}>Contacts</h2>
-          <Filter
-            value={this.state.filter}
-            onChange={this.changeFilter}
-          ></Filter>
+          <Filter value={this.state.filter} onChange={this.changeFilter} />
           <Contacts
             actualContacts={filteredContacts}
             deleteContact={this.deleteContact}
-          ></Contacts>
+          />
         </div>
       </>
     );
